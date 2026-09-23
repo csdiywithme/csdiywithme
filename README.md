@@ -2,7 +2,11 @@
 
 这里按课程整理我的代码仓库和学习资料。点击项目名称可以进入对应仓库。
 
-[AI Infra 与推理](#ai-infra-与推理) · [CS149](#cs149--parallel-computing) · [CS336](#cs336--language-modeling-from-scratch) · [其他课程与实验](#其他课程与实验)
+[课程笔记](#课程笔记) · [AI Infra 与推理](#ai-infra-与推理) · [CS149](#cs149--parallel-computing) · [CS336](#cs336--language-modeling-from-scratch) · [其他课程与实验](#其他课程与实验)
+
+## 课程笔记
+
+[AI Infra 课程笔记](https://github.com/csdiywithme/AI_infra) · CS149、CS336、CMU 11-763、LCPU AI Infra 与 HPCGame 2026 的课程笔记，按课程和讲次整理。
 
 ## AI Infra 与推理
 

@@ -13,7 +13,7 @@
 | 课程 | 仓库 |
 | --- | --- |
 | 北大未名超算队 × LCPU AI Infra Seminars | [课程作业与实验](https://github.com/csdiywithme/wmhpc-training-camp-x-lcpu-ai-infra-seminars) |
-| CMU Language Model Inference | [课程代码与作业](https://github.com/csdiywithme/lminference-fall2025-code) |
+| CMU 11-763 · Language Model Inference | [课程仓库](https://github.com/csdiywithme/lminference-fall2025-code) · [HW3：KV Cache 与推测采样](https://github.com/csdiywithme/lminference-fall2025-code/blob/main/homework3/STATUS.zh-CN.md) · [复现说明](https://github.com/csdiywithme/lminference-fall2025-code/blob/main/homework3/REPRODUCE.md) |
 
 ## CS149 · Parallel Computing
 

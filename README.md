@@ -1,43 +1,62 @@
 # simida
 
-这里按课程整理我的代码仓库和学习资料。点击项目名称可以进入对应仓库。
+**LLM inference systems · GPU performance**
 
-[课程笔记](#课程笔记) · [AI Infra 与推理](#ai-infra-与推理) · [CS149](#cs149--parallel-computing) · [CS336](#cs336--language-modeling-from-scratch) · [其他课程与实验](#其他课程与实验)
+I build LLM serving systems on Ascend, with a focus on request routing and KV cache reuse. My public work includes CUDA and Triton kernel experiments on NVIDIA Blackwell.
 
-## 课程笔记
+[Kernel studies](#kernel-studies) · [Notes](#notes) · [Coursework](#coursework)
 
-[AI Infra 课程笔记](https://github.com/csdiywithme/AI_infra) · CS149、CS336、CMU 11-763、LCPU AI Infra 与 HPCGame 2026 的课程笔记，按课程和讲次整理。
+## Kernel studies
 
-## AI Infra 与推理
+AI-assisted experiments from the WMHPC × LCPU AI Infra Seminars.
 
-| 课程 | 仓库 |
-| --- | --- |
-| 北大未名超算队 × LCPU AI Infra Seminars | [课程作业与实验](https://github.com/csdiywithme/wmhpc-training-camp-x-lcpu-ai-infra-seminars) |
-| CMU 11-763 · Language Model Inference | [课程仓库](https://github.com/csdiywithme/lminference-fall2025-code) · [HW3：KV Cache 与推测采样](https://github.com/csdiywithme/lminference-fall2025-code/blob/main/homework3/STATUS.zh-CN.md) · [复现说明](https://github.com/csdiywithme/lminference-fall2025-code/blob/main/homework3/REPRODUCE.md) |
+### MiniMax M3 sparse decode
 
-## CS149 · Parallel Computing
+In this team project, we kept the original Triton partial kernel and tiled the merge over output channels with one warp per CTA. Nsight Compute showed fewer shared-memory wavefronts in the BF16 cases we profiled.
 
-| 项目 | 内容 |
-| --- | --- |
-| [Assignment 1](https://github.com/csdiywithme/cs149-asst1) | CPU 并行、SIMD 与性能分析 |
-| [Assignment 2](https://github.com/csdiywithme/cs149-asst2) | 并行任务执行库与任务依赖调度 |
-| [Assignment 3](https://github.com/csdiywithme/cs149-asst3) | CUDA 圆形渲染器 |
-| [CS149 GPT](https://github.com/csdiywithme/cs149-cs149gpt) | NanoGPT 的 CPU Attention 优化 |
-| [Big Graphs](https://github.com/csdiywithme/cs149-biggraphs-ec) | OpenMP 大图 BFS |
+On B300, the full partial + merge path ran **1.117× faster** than the original path (geometric mean across 16 configurations with PDL off). Four configurations regressed with PDL on.
 
-## CS336 · Language Modeling from Scratch
+[Triton code][msa-code] · [Benchmark and correctness checks][msa-results]
 
-| 项目 | 内容 |
-| --- | --- |
-| [Assignment 1 · Basics](https://github.com/csdiywithme/cs336-assignment1-basics) | 语言模型基础 |
-| [Assignment 2 · Systems](https://github.com/csdiywithme/cs336-assignment2-systems) | 语言模型系统优化与分布式训练 |
-| [Assignment 3 · Scaling](https://github.com/csdiywithme/cs336-assignment3-scaling) | 语言模型规模实验 |
-| [Lectures](https://github.com/csdiywithme/cs336-lectures) | 课程讲义、示例与课件 |
+### Blackwell BF16 GEMM
 
-## 其他课程与实验
+The epilogue reads more accumulators per TMEM load and rearranges them in shared memory for coalesced stores. In the same B300 run at **M = N = K = 4096**, the persistent baseline measured **654 TFLOP/s**, the epilogue variant **970 TFLOP/s**, and the variant with a 128-wide output tile **1,140 TFLOP/s**.
 
-| 课程 / 实验 | 仓库 |
-| --- | --- |
-| MIT 6.824 · 分布式系统 | [MIT-6.824](https://github.com/csdiywithme/MIT-6.824) |
-| UC Berkeley CS61A · 程序的构造与解释 | [UCB-CS61A](https://github.com/csdiywithme/UCB-CS61A) |
-| libfabric / EFA | [libfabric-efa-demo](https://github.com/csdiywithme/libfabric-efa-demo) |
+[CUDA code][gemm-code] · [Benchmark and Nsight Compute results][gemm-results]
+
+## Notes
+
+[AI Infra notes and knowledge map](https://github.com/csdiywithme/AI_infra) · Course notes and experiment logs spanning LLM serving, training systems, GPU kernels, and parallel computing. Includes notes from CS149, CS336, CMU 11-763, the LCPU AI Infra Seminars, and HPCGame 2026.
+
+## Coursework
+
+### AI Infra and Inference
+
+- **WMHPC × LCPU AI Infra Seminars** · [Assignments and experiments](https://github.com/csdiywithme/wmhpc-training-camp-x-lcpu-ai-infra-seminars)
+- **CMU 11-763 · Inference Algorithms for Language Modeling** · [Course repository](https://github.com/csdiywithme/lminference-fall2025-code) · [HW3: KV cache and speculative sampling](https://github.com/csdiywithme/lminference-fall2025-code/blob/main/homework3/STATUS.zh-CN.md) · [Reproduction guide](https://github.com/csdiywithme/lminference-fall2025-code/blob/main/homework3/REPRODUCE.md)
+
+### CS149 · Parallel Computing
+
+- [Assignment 1](https://github.com/csdiywithme/cs149-asst1) · CPU parallelism, SIMD, and profiling
+- [Assignment 2](https://github.com/csdiywithme/cs149-asst2) · Parallel task runtime and dependency scheduling
+- [Assignment 3](https://github.com/csdiywithme/cs149-asst3) · CUDA circle renderer
+- [CS149 GPT](https://github.com/csdiywithme/cs149-cs149gpt) · CPU attention optimization for nanoGPT
+- [Big Graphs](https://github.com/csdiywithme/cs149-biggraphs-ec) · Parallel BFS with OpenMP
+
+### CS336 · Language Modeling from Scratch
+
+- [Assignment 1 · Basics](https://github.com/csdiywithme/cs336-assignment1-basics) · Language model fundamentals
+- [Assignment 2 · Systems](https://github.com/csdiywithme/cs336-assignment2-systems) · Language model performance and distributed training
+- [Assignment 3 · Scaling](https://github.com/csdiywithme/cs336-assignment3-scaling) · Language model scaling experiments
+- [Lectures](https://github.com/csdiywithme/cs336-lectures) · Lecture notes, examples, and slides
+
+### Other Courses and Experiments
+
+- [MIT 6.824](https://github.com/csdiywithme/MIT-6.824) · Distributed Systems
+- [UC Berkeley CS61A](https://github.com/csdiywithme/UCB-CS61A) · Structure and Interpretation of Computer Programs
+- [libfabric / EFA](https://github.com/csdiywithme/libfabric-efa-demo) · Networking demo
+
+[msa-code]: https://github.com/csdiywithme/wmhpc-training-camp-x-lcpu-ai-infra-seminars/blob/main/assignment02/team/c2_msa_decode/candidate.py
+[msa-results]: https://github.com/csdiywithme/wmhpc-training-camp-x-lcpu-ai-infra-seminars/blob/main/assignment02/team/c2_msa_decode/experiments/CANDIDATE_EXPERIMENTS.md
+[gemm-code]: https://github.com/csdiywithme/wmhpc-training-camp-x-lcpu-ai-infra-seminars/blob/main/assignment02/cuda/m4_gemm/04h_bn128.cu
+[gemm-results]: https://github.com/csdiywithme/wmhpc-training-camp-x-lcpu-ai-infra-seminars/blob/main/assignment02/experiments/results/m4-epilogue-tiles-20260923T044929Z/OBSERVATIONS.md

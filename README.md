@@ -8,7 +8,20 @@ At **HiSilicon Turing**, I developed NIC firmware features for LACP link aggrega
 
 **Currently studying** [CMU 11-768 · AI Agents][agents]. I’m exploring agent harnesses and evaluation, with [notes on how these methods apply to AI infrastructure][agents-notes].
 
-[Kernel studies](#kernel-studies) · [Notes](#notes) · [Coursework](#coursework)
+[Open-source explorations](#open-source-explorations) · [Kernel studies](#kernel-studies) · [Notes](#notes) · [Coursework](#coursework)
+
+## Open-source explorations
+
+### DeepInfer LocalEngram on B300
+
+I ran DeepSeek V4.1 Flash with its full weights on four B300s using the NVLink LocalEngram path from [community PR #246][engram-upstream]. I profiled the stock gather, a fused Triton gather prototype, layer prefetch, and their combination in one allocation. At 8K context, the fused prototype reduced median decode step intervals by **2.30%** at one request per rank and **1.84%** at eight in a fixed-order run. Generated tokens matched the stock path.
+
+[Reproduction, measurements, and traces][local-engram]
+
+| Project | What I investigated | Public evidence |
+| --- | --- | --- |
+| vLLM / MiniMax M3 | WMHPC team follow-up on sparse decode. In a one-layer dummy-weight replay, CUDA Graph padding crossed the backend-selection threshold in 24 of 41 CUTLASS decode steps. | [Workload replay and analysis][msa-replay] |
+| PyTorch FSDP2 / NCCL | Compared SM and copy-engine all-gather with symmetric staging fixed on two B300s. The median training step fell 0.71%, while P95 rose slightly. | [Benchmark and Nsight evidence][fsdp2-ce] |
 
 ## Kernel studies
 
@@ -69,3 +82,7 @@ The epilogue reads more accumulators per TMEM load and rearranges them in shared
 [msa-follow-up]: https://github.com/csdiywithme/wmhpc-training-camp-x-lcpu-ai-infra-seminars/blob/4ba7bb18f0f8c847b46fbbd824e81171f608ec61/assignment02/team/c2_msa_decode/experiments/FRONTIER_MSA.md
 [gemm-code]: https://github.com/csdiywithme/wmhpc-training-camp-x-lcpu-ai-infra-seminars/blob/main/assignment02/cuda/m4_gemm/04h_bn128.cu
 [gemm-results]: https://github.com/csdiywithme/wmhpc-training-camp-x-lcpu-ai-infra-seminars/blob/main/assignment02/experiments/results/m4-epilogue-tiles-20260923T044929Z/OBSERVATIONS.md
+[local-engram]: https://github.com/csdiywithme/deepinfer-localengram-profiling
+[engram-upstream]: https://github.com/deepseek-ai/DeepInfer/pull/246
+[msa-replay]: https://github.com/csdiywithme/wmhpc-training-camp-x-lcpu-ai-infra-seminars/blob/4ba7bb18f0f8c847b46fbbd824e81171f608ec61/assignment02/team/c2_msa_decode/experiments/FRONTIER_MSA_WORKLOAD.md
+[fsdp2-ce]: https://github.com/csdiywithme/cs336-assignment2-systems/blob/main/output/fsdp2-ce/README.md

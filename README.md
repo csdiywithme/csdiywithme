@@ -2,7 +2,11 @@
 
 **LLM inference systems · GPU performance**
 
-I build LLM serving systems on Ascend, with a focus on request routing and KV cache reuse. My public work includes CUDA and Triton kernel experiments on NVIDIA Blackwell.
+I’ve worked on LLM serving on Ascend, focusing on request routing and KV cache reuse. My public work includes CUDA and Triton kernel experiments on NVIDIA Blackwell.
+
+At **HiSilicon Turing (Huawei OD)**, I developed NIC firmware features for LACP link aggregation offload and QoS. For NIC chip verification, I wrote SystemVerilog/UVM sequences and implemented core reference-model logic for VirtIO packed queues.
+
+**Currently studying** [CMU 11-768 · AI Agents][agents]. I’m exploring agent harnesses and evaluation, with [notes on how these methods apply to AI infrastructure][agents-notes].
 
 [Kernel studies](#kernel-studies) · [Notes](#notes) · [Coursework](#coursework)
 
@@ -16,7 +20,9 @@ In this team project, we kept the original Triton partial kernel and tiled the m
 
 On B300, the full partial + merge path ran **1.117× faster** than the original path (geometric mean across 16 configurations with PDL off). Four configurations regressed with PDL on.
 
-[Triton code][msa-code] · [Benchmark and correctness checks][msa-results]
+In a follow-up on B300, two PDL regressions seen in 64-call CUDA Graphs were near zero in single-call graphs. A separate one-layer vLLM replay traced how graph padding affected the choice between Triton and CUTLASS.
+
+[Triton code][msa-code] · [Benchmark and correctness checks][msa-results] · [PDL and vLLM follow-up][msa-follow-up]
 
 ### Blackwell BF16 GEMM
 
@@ -56,7 +62,10 @@ The epilogue reads more accumulators per TMEM load and rearranges them in shared
 - [UC Berkeley CS61A](https://github.com/csdiywithme/UCB-CS61A) · Structure and Interpretation of Computer Programs
 - [libfabric / EFA](https://github.com/csdiywithme/libfabric-efa-demo) · Networking demo
 
+[agents]: https://github.com/csdiywithme/11-768-ai-agents
+[agents-notes]: https://github.com/csdiywithme/11-768-ai-agents/tree/main/research/ai-infra
 [msa-code]: https://github.com/csdiywithme/wmhpc-training-camp-x-lcpu-ai-infra-seminars/blob/main/assignment02/team/c2_msa_decode/candidate.py
 [msa-results]: https://github.com/csdiywithme/wmhpc-training-camp-x-lcpu-ai-infra-seminars/blob/main/assignment02/team/c2_msa_decode/experiments/CANDIDATE_EXPERIMENTS.md
+[msa-follow-up]: https://github.com/csdiywithme/wmhpc-training-camp-x-lcpu-ai-infra-seminars/blob/4ba7bb18f0f8c847b46fbbd824e81171f608ec61/assignment02/team/c2_msa_decode/experiments/FRONTIER_MSA.md
 [gemm-code]: https://github.com/csdiywithme/wmhpc-training-camp-x-lcpu-ai-infra-seminars/blob/main/assignment02/cuda/m4_gemm/04h_bn128.cu
 [gemm-results]: https://github.com/csdiywithme/wmhpc-training-camp-x-lcpu-ai-infra-seminars/blob/main/assignment02/experiments/results/m4-epilogue-tiles-20260923T044929Z/OBSERVATIONS.md

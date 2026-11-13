@@ -1,4 +1,4 @@
-# simida
+# Simida
 
 **LLM inference systems · GPU performance**
 

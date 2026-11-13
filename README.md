@@ -4,7 +4,7 @@
 
 I’ve worked on LLM serving on Ascend, focusing on request routing and KV cache reuse. My public work includes CUDA and Triton kernel experiments on NVIDIA Blackwell.
 
-At **HiSilicon Turing (Huawei OD)**, I developed NIC firmware features for LACP link aggregation offload and QoS. For NIC chip verification, I wrote SystemVerilog/UVM sequences and implemented core reference-model logic for VirtIO packed queues.
+At **HiSilicon Turing**, I developed NIC firmware features for LACP link aggregation offload and QoS. For NIC chip verification, I wrote SystemVerilog/UVM sequences and implemented core reference-model logic for VirtIO packed queues.
 
 **Currently studying** [CMU 11-768 · AI Agents][agents]. I’m exploring agent harnesses and evaluation, with [notes on how these methods apply to AI infrastructure][agents-notes].
 

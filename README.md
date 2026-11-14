@@ -39,9 +39,11 @@ In a follow-up on B300, two PDL regressions seen in 64-call CUDA Graphs were nea
 
 ### Blackwell BF16 GEMM
 
-The epilogue reads more accumulators per TMEM load and rearranges them in shared memory for coalesced stores. In the same B300 run at **M = N = K = 4096**, the persistent baseline measured **654 TFLOP/s**, the epilogue variant **970 TFLOP/s**, and the variant with a 128-wide output tile **1,140 TFLOP/s**.
+I tuned a CUDA/PTX kernel with a five-stage TMA pipeline and double-buffered TMEM to overlap compute and writeback. For **4096³ on B300**, it reached **91.94–93.54%** of the fastest cuBLAS path I measured.
 
-[CUDA code][gemm-code] · [Benchmark and Nsight Compute results][gemm-results]
+I used Nsight Compute and SASS to guide tuning of a CUTLASS-derived two-CTA kernel, testing dynamic tile scheduling, pipeline depth, and TMA issue order. In single-GPU tests on two B300s, the tuned kernel delivered **2.35–4.18% higher throughput** than default cuBLAS GemmEx and reached **97.45–99.69%** of a fixed cuBLASLt baseline.
+
+[Implementations and experiment notes][gemm-overview] · [CUTLASS benchmarks][gemm-results]
 
 ## Notes
 
@@ -80,8 +82,8 @@ The epilogue reads more accumulators per TMEM load and rearranges them in shared
 [msa-code]: https://github.com/csdiywithme/wmhpc-training-camp-x-lcpu-ai-infra-seminars/blob/main/assignment02/team/c2_msa_decode/candidate.py
 [msa-results]: https://github.com/csdiywithme/wmhpc-training-camp-x-lcpu-ai-infra-seminars/blob/main/assignment02/team/c2_msa_decode/experiments/CANDIDATE_EXPERIMENTS.md
 [msa-follow-up]: https://github.com/csdiywithme/wmhpc-training-camp-x-lcpu-ai-infra-seminars/blob/4ba7bb18f0f8c847b46fbbd824e81171f608ec61/assignment02/team/c2_msa_decode/experiments/FRONTIER_MSA.md
-[gemm-code]: https://github.com/csdiywithme/wmhpc-training-camp-x-lcpu-ai-infra-seminars/blob/main/assignment02/cuda/m4_gemm/04h_bn128.cu
-[gemm-results]: https://github.com/csdiywithme/wmhpc-training-camp-x-lcpu-ai-infra-seminars/blob/main/assignment02/experiments/results/m4-epilogue-tiles-20260923T044929Z/OBSERVATIONS.md
+[gemm-overview]: https://github.com/csdiywithme/wmhpc-training-camp-x-lcpu-ai-infra-seminars/blob/ae1c056d60f916097f3a2cf0cdc53abfc86875de/assignment02/experiments/bf16_frontier_20261113/OVERVIEW.md
+[gemm-results]: https://github.com/csdiywithme/wmhpc-training-camp-x-lcpu-ai-infra-seminars/blob/ae1c056d60f916097f3a2cf0cdc53abfc86875de/assignment02/experiments/bf16_frontier_20261113/pack192_input_order/METHOD.md
 [local-engram]: https://github.com/csdiywithme/deepinfer-localengram-profiling
 [engram-upstream]: https://github.com/deepseek-ai/DeepInfer/pull/246
 [msa-replay]: https://github.com/csdiywithme/wmhpc-training-camp-x-lcpu-ai-infra-seminars/blob/4ba7bb18f0f8c847b46fbbd824e81171f608ec61/assignment02/team/c2_msa_decode/experiments/FRONTIER_MSA_WORKLOAD.md
